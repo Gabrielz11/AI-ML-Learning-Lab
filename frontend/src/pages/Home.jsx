@@ -1,21 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  ArrowRight, 
-  BrainCircuit, 
-  LineChart, 
-  BarChart3, 
-  GraduationCap,
-  Database,
-  Search,
-  BookOpen,
-  TrendingUp
+import {
+  ArrowRight,
+  BrainCircuit,
+  LineChart,
+  BarChart3,
+  History,
+  CheckCircle2,
+  Zap,
+  Activity as ActivityIcon,
+  Clock
 } from 'lucide-react';
 
 const PageCard = ({ title, desc, icon: Icon, onClick, color, badge }) => (
-  <button 
+  <button
     onClick={onClick}
-    className="card-container text-left group flex flex-col gap-6 relative overflow-hidden"
+    className="card-container text-left group flex flex-col gap-6 relative overflow-hidden h-full"
   >
     <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${color}`}>
       <Icon size={24} />
@@ -36,14 +36,46 @@ const PageCard = ({ title, desc, icon: Icon, onClick, color, badge }) => (
     <div className="flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-4 transition-all">
       Explorar módulo <ArrowRight size={16} />
     </div>
-    {/* Subtle background decoration */}
-    <div className={`absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity ${color.split(' ')[1]}`}>
-      <Icon size={80} />
-    </div>
   </button>
 );
 
+const ActivityItem = ({ model, type, metric, time, status }) => (
+  <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-white hover:border-indigo-100 hover:shadow-sm transition-all group">
+    <div className="flex items-center gap-4">
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${type === 'Classificação' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'
+        }`}>
+        {type === 'Classificação' ? <BrainCircuit size={18} /> : <LineChart size={18} />}
+      </div>
+      <div>
+        <h5 className="text-sm font-bold text-slate-800">{model}</h5>
+        <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase font-bold">
+          <span>{type}</span>
+          <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+          <span className="flex items-center gap-1"><Clock size={10} /> {time}</span>
+        </div>
+      </div>
+    </div>
+    <div className="flex items-center gap-4">
+      <div className="text-right">
+        <div className="text-sm font-bold text-slate-900">{metric}</div>
+        <div className="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
+          <CheckCircle2 size={10} /> {status}
+        </div>
+      </div>
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <ArrowRight size={16} className="text-slate-300" />
+      </div>
+    </div>
+  </div>
+);
+
 const Home = ({ onNavigate }) => {
+  const recentActivities = [
+    { model: 'Random Forest Classifier', type: 'Classificação', metric: '98.2% Acc', time: 'Há 5 min', status: 'Sucesso' },
+    { model: 'Linear Regression', type: 'Regressão', metric: '12.4 MAE', time: 'Há 15 min', status: 'Concluído' },
+    { model: 'Logistic Regression', type: 'Classificação', metric: '94.2% Acc', time: 'Há 1 hora', status: 'Alta Precisão' },
+  ];
+
   return (
     <div className="max-w-6xl mx-auto space-y-12 pb-12">
       <section className="space-y-6">
@@ -67,7 +99,7 @@ const Home = ({ onNavigate }) => {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <PageCard 
+        <PageCard
           title="Classificação"
           desc="Ensine a máquina a distinguir entre categorias. Exemplo: Diagnóstico de Câncer de Mama."
           icon={BrainCircuit}
@@ -75,7 +107,7 @@ const Home = ({ onNavigate }) => {
           color="bg-indigo-500/10 text-indigo-500"
           badge="Supervisionado"
         />
-        <PageCard 
+        <PageCard
           title="Regressão"
           desc="Preveja valores numéricos exatos. Exemplo: Progressão de doenças baseada em IMC."
           icon={LineChart}
@@ -83,7 +115,7 @@ const Home = ({ onNavigate }) => {
           color="bg-emerald-500/10 text-emerald-500"
           badge="Numérico"
         />
-        <PageCard 
+        <PageCard
           title="Comparação"
           desc="Compare múltiplos algoritmos lado a lado e analise trade-offs de performance e custo."
           icon={BarChart3}
@@ -91,52 +123,6 @@ const Home = ({ onNavigate }) => {
           color="bg-amber-500/10 text-amber-500"
           badge="Analytics"
         />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-slate-50 rounded-[2rem] p-4">
-        <div className="p-10 space-y-6">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-            <BookOpen size={24} />
-          </div>
-          <h3 className="text-3xl font-bold text-slate-900">Modo Estudo: O Caminho do Dado</h3>
-          <p className="text-slate-600 leading-relaxed">
-            Aprenda como os dados são preparados, por que dividimos em conjuntos de treino e teste, e como interpretar cada métrica sem segredos.
-          </p>
-          <div className="flex flex-col gap-3 pt-4">
-            <div className="flex items-center gap-3 text-sm font-medium text-slate-700">
-              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">✓</div>
-              Explicações em linguagem simples e direta
-            </div>
-            <div className="flex items-center gap-3 text-sm font-medium text-slate-700">
-              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">✓</div>
-              Visualizações interativas de cada etapa
-            </div>
-          </div>
-          <button 
-            onClick={() => onNavigate('learning')}
-            className="btn-primary mt-4"
-          >
-            Acessar Trilhas Educativas
-          </button>
-        </div>
-        <div className="relative h-full min-h-[300px] rounded-[1.5rem] bg-indigo-900 overflow-hidden group">
-          {/* Mock UI illustration */}
-          <div className="absolute inset-8 border border-white/10 rounded-xl bg-white/5 backdrop-blur-sm p-4 space-y-4">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-rose-400"></div>
-              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-              <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-            </div>
-            <div className="space-y-2">
-              <div className="h-4 w-[60%] bg-white/10 rounded"></div>
-              <div className="h-4 w-[80%] bg-white/10 rounded"></div>
-            </div>
-            <div className="h-32 w-full bg-indigo-500/20 rounded-lg flex items-center justify-center border border-indigo-400/20">
-              <TrendingUp className="text-indigo-300 animate-pulse" size={40} />
-            </div>
-          </div>
-          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
-        </div>
       </div>
     </div>
   );
