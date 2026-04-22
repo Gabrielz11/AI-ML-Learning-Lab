@@ -51,7 +51,14 @@ async def execute_experiment(request: ExperimentRequest):
             
         elif request.task_type == "regression":
             results, _, _, _, _, _ = run_regression_pipeline(request.models, lang=request.lang)
-            return results
+            # Prepare serializable results
+            serializable_results = {}
+            for name, data in results.items():
+                serializable_results[name] = {
+                    "metrics": data["metrics"],
+                    "explanation": data["explanation"]
+                }
+            return serializable_results
             
         else:
             raise HTTPException(status_code=400, detail="Invalid task type")

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  Activity, 
-  TrendingUp, 
-  Hash, 
-  Ruler, 
-  Info, 
+import {
+  Play,
+  Activity,
+  TrendingUp,
+  Hash,
+  Ruler,
+  Info,
   LineChart as LineChartIcon,
   Database,
   Target
 } from 'lucide-react';
-import { 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip as RechartsTooltip, 
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   Line,
   ComposedChart,
@@ -32,29 +32,51 @@ const Regression = () => {
   const [results, setResults] = useState(null);
 
   // Dados de dispersão (Pontos)
-  const scatterData = Array.from({ length: 40 }, (_, i) => ({
-    actual: Math.floor(Math.random() * 200) + 50,
-    predicted: 0,
-  })).map(d => ({
-    ...d,
-    predicted: d.actual + (Math.random() * 50 - 25)
-  }));
+  const [scatterData, setScatterData] = useState([]);
 
-  // Dados da Linha Ideal (Deve usar os mesmos nomes de campo: actual e predicted)
+  // Dados da Linha Ideal
   const lineData = [
-    { actual: 50, predicted: 50 }, 
-    { actual: 250, predicted: 250 }
+    { actual: 0, predicted: 0 },
+    { actual: 350, predicted: 350 }
   ];
 
-  const runModel = () => {
+  const runModel = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setResults({
-        metrics: { mae: "12.4", rmse: "15.8", r2: "0.89" },
-        explanation: "O modelo apresenta um excelente ajuste aos dados (R² de 0.89). A maioria das predições está próxima da linha ideal, indicando que os padrões de progressão da diabetes foram capturados com sucesso."
+    try {
+      const response = await fetch('http://localhost:8000/run-experiment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          task_type: 'regression',
+          models: ['Linear Regression', 'Decision Tree Regressor'],
+          lang: 'pt'
+        })
       });
+      const data = await response.json();
+
+      const primaryModel = data['Linear Regression'] || Object.values(data)[0];
+
+      // Generate some visual scatter data for the chart based on the metrics
+      const mockScatter = Array.from({ length: 50 }, (_, i) => {
+        const actual = Math.floor(Math.random() * 300) + 20;
+        const error = (Math.random() - 0.5) * (primaryModel.metrics.MAE * 4);
+        return { actual, predicted: actual + error };
+      });
+
+      setResults({
+        metrics: {
+          mae: primaryModel.metrics.MAE.toFixed(2),
+          rmse: primaryModel.metrics.RMSE.toFixed(2),
+          r2: primaryModel.metrics['R2 Score'].toFixed(3)
+        },
+        explanation: primaryModel.explanation
+      });
+      setScatterData(mockScatter);
+    } catch (error) {
+      console.error("Erro ao treinar modelos:", error);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handlePredict = (inputs) => {
@@ -62,7 +84,7 @@ const Regression = () => {
     const age = parseFloat(inputs.age);
     const bp = parseFloat(inputs.bp);
     const score = (bmi * 2.5) + (age * 0.8) + (bp * 0.5);
-    
+
     let explanation = "";
     if (bmi > 30) {
       explanation = `O score deu elevado (${score.toFixed(1)}) principalmente devido ao IMC alto. Na nossa base de dados, pacientes com IMC acima de 30 tendem a ter uma progressão da doença muito mais rápida.`;
@@ -72,8 +94,8 @@ const Regression = () => {
       explanation = `O resultado indica uma progressão moderada. A IA combinou os três fatores de forma equilibrada.`;
     }
 
-    return { 
-      label: `Score: ${score.toFixed(1)}`, 
+    return {
+      label: `Score: ${score.toFixed(1)}`,
       status: score > 180 ? 'danger' : 'info',
       explanation: explanation,
       ideal: "Para este cenário de Diabetes, o ideal seria um score abaixo de 100, indicando progressão lenta ou estável."
@@ -111,51 +133,50 @@ const Regression = () => {
 
                 <section className="card-container bg-white">
                   <h4 className="font-bold mb-6 flex items-center gap-2 text-slate-800">
-                    <LineChartIcon size={18} className="text-emerald-500" /> 
+                    <LineChartIcon size={18} className="text-emerald-500" />
                     Análise de Dispersão: Real vs. Preditivo
                   </h4>
                   <div className="h-[380px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <ComposedChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis 
-                          type="number" 
-                          dataKey="actual" 
-                          name="Real" 
-                          axisLine={false} 
-                          tickLine={false} 
+                        <XAxis
+                          type="number"
+                          dataKey="actual"
+                          name="Real"
+                          axisLine={false}
+                          tickLine={false}
                           tick={{ fontSize: 11, fill: '#94a3b8' }}
                           label={{ value: 'Valor Real', position: 'bottom', offset: 0, fontSize: 12, fill: '#64748b' }}
                         />
-                        <YAxis 
-                          type="number" 
-                          dataKey="predicted" 
-                          name="Predito" 
-                          axisLine={false} 
-                          tickLine={false} 
+                        <YAxis
+                          type="number"
+                          dataKey="predicted"
+                          name="Preditivo"
+                          axisLine={false}
+                          tickLine={false}
                           tick={{ fontSize: 11, fill: '#94a3b8' }}
                           label={{ value: 'Previsão da IA', angle: -90, position: 'left', offset: 0, fontSize: 12, fill: '#64748b' }}
                         />
                         <ZAxis range={[60, 60]} />
-                        <RechartsTooltip 
+                        <RechartsTooltip
                           cursor={{ strokeDasharray: '3 3' }}
                           contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                         />
                         <Legend verticalAlign="top" height={36} />
-                        
+
                         <Scatter name="Casos Individuais" data={scatterData} fill="#6366f1" opacity={0.5} />
-                        
-                        {/* Linha de Predição Ideal Corrigida */}
-                        <Line 
-                          type="monotone" 
-                          data={lineData} 
-                          dataKey="predicted" 
-                          stroke="#10b981" 
-                          strokeWidth={3} 
+
+                        <Line
+                          type="monotone"
+                          data={lineData}
+                          dataKey="predicted"
+                          stroke="#10b981"
+                          strokeWidth={3}
                           strokeDasharray="5 5"
-                          dot={false} 
-                          activeDot={false} 
-                          name="Linha de Predição Ideal (Erro Zero)" 
+                          dot={false}
+                          activeDot={false}
+                          name="Linha de Predição Ideal (Erro Zero)"
                           animationDuration={1000}
                         />
                       </ComposedChart>
@@ -173,13 +194,13 @@ const Regression = () => {
                       </div>
                       <div className="space-y-2">
                         <p>Quanto mais agrupados ao redor da linha os pontos estiverem, melhor é o seu modelo.</p>
-                        <p>Pontos muito distantes (Outliers) indicam casos onde a IA teve dificuldade em prever a progressão da doença.</p>
+                        <p>O R² mede o quanto esta "nuvem" de pontos segue a tendência da linha verde comparada a apenas chutar a média.</p>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                <Simulator 
+                <Simulator
                   title="Simulador de Progressão"
                   description="Teste a IA com dados clínicos personalizados."
                   onPredict={handlePredict}
@@ -190,7 +211,7 @@ const Regression = () => {
                   ]}
                 />
 
-                <ExplanationBox title="Veredito da Performance" content={results.explanation} type="success" />
+                <ExplanationBox title="Análise Pedagógica Profunda" content={results.explanation} type="success" />
               </motion.div>
             )}
           </AnimatePresence>

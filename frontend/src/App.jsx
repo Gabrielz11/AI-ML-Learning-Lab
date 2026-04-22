@@ -10,6 +10,7 @@ import Classification from './pages/Classification';
 import Regression from './pages/Regression';
 import Comparison from './pages/Comparison';
 import LearningMode from './pages/LearningMode';
+import FAQ from './pages/FAQ';
 
 function App() {
   const [activePage, setActivePage] = useState('home');
@@ -33,6 +34,8 @@ function App() {
         return <Comparison />;
       case 'learning':
         return <LearningMode />;
+      case 'faq':
+        return <FAQ />;
       case 'settings':
         return (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-4">

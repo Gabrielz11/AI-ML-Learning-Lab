@@ -1,67 +1,94 @@
 def explain_classification_metrics(metrics, model_name, lang="pt"):
     """
-    Provides a human-readable explanation of classification metrics.
+    Provides a deep pedagogical explanation of classification metrics and the confusion matrix.
     """
     acc = metrics["Accuracy"] * 100
     rec = metrics["Recall"] * 100
     pre = metrics["Precision"] * 100
+    f1 = metrics["F1-score"] * 100
+    cm = metrics.get("Confusion Matrix", [[0,0],[0,0]])
     
+    # Extract CM values (assuming binary classification: 0=Benign, 1=Malignant)
+    tn, fp, fn, tp = cm[0][0], cm[0][1], cm[1][0], cm[1][1]
+
     if lang == "pt":
-        explanation = f"### 💡 Explicação dos Resultados ({model_name})\n\n"
-        explanation += f"- **Acurácia ({acc:.1f}%):** Significa que o modelo acertou {acc:.1f} de cada 100 casos no total.\n"
-        explanation += f"- **Recall ({rec:.1f}%):** Indica que o modelo conseguiu identificar {rec:.1f}% de todos os casos positivos reais.\n"
-        explanation += f"- **Precisão ({pre:.1f}%):** Quando o modelo diz que é positivo, ele acerta em {pre:.1f}% das vezes.\n\n"
+        explanation = f"### 🚀 Diagnóstico do Modelo: **{model_name}**\n\n"
+        explanation += f"O modelo alcançou uma **Acurácia de {acc:.1f}%**. Mas em diagnósticos de saúde, o segredo está nos detalhes:\n\n"
         
-        if acc > 85:
-            explanation += "✅ **Desempenho:** O modelo está com um excelente desempenho geral.\n"
-        elif acc > 70:
-            explanation += "⚠️ **Desempenho:** O modelo é razoável, mas pode ser melhorado.\n"
-        else:
-            explanation += "❌ **Desempenho:** O modelo está errando muito.\n"
+        explanation += "---\n\n"
+        explanation += "#### 📊 A Anatomia da Decisão (Matriz de Confusão)\n"
+        explanation += "Imagine que cada previsão é uma peça de um quebra-cabeça:\n\n"
+        explanation += f"- ✅ **Acertos Precisos:** O modelo identificou corretamente **{tn}** casos benignos e **{tp}** casos malignos.\n"
+        explanation += f"- ⚠️ **Alarme Falso (Falsos Positivos):** Em **{fp}** casos, a IA foi cautelosa demais e indicou risco onde não havia.\n"
+        explanation += f"- 🚨 **O Perigo Oculto (Falsos Negativos):** Houve **{fn}** casos onde a IA falhou em detectar o tumor. **Este é o número que tentamos zerar.**\n\n"
+
+        explanation += "---\n\n"
+        explanation += "#### 🎯 Por que o Recall é o nosso Herói?\n"
+        explanation += f"Seu **Recall de {rec:.1f}%** nos diz quão bem a IA 'varre' o hospital em busca de riscos. Preferimos um modelo que 'suspeite' de tudo (Alto Recall) do que um que ignore um problema real por excesso de confiança.\n\n"
+        
+        explanation += f"> **Conclusão:** Com um **F1-Score de {f1:.1f}%**, este modelo mostra um equilíbrio {'sólido' if f1 > 90 else 'em desenvolvimento'} entre ser preciso e ser abrangente."
+        
     else:
-        explanation = f"### 💡 Results Explanation ({model_name})\n\n"
-        explanation += f"- **Accuracy ({acc:.1f}%):** Means the model got {acc:.1f} out of 100 cases correct overall.\n"
-        explanation += f"- **Recall ({rec:.1f}%):** Indicates the model identified {rec:.1f}% of all actual positive cases.\n"
-        explanation += f"- **Precision ({pre:.1f}%):** When the model says it's positive, it is correct {pre:.1f}% of the time.\n\n"
+        explanation = f"### 🚀 Model Diagnosis: **{model_name}**\n\n"
+        explanation += f"The model achieved **{acc:.1f}% Accuracy**. However, in medical diagnostics, the truth lies in the details:\n\n"
         
-        if acc > 85:
-            explanation += "✅ **Performance:** The model has excellent overall performance.\n"
-        elif acc > 70:
-            explanation += "⚠️ **Performance:** The model is reasonable but can be improved.\n"
-        else:
-            explanation += "❌ **Performance:** The model is making many mistakes.\n"
+        explanation += "---\n\n"
+        explanation += "#### 📊 Decision Anatomy (Confusion Matrix)\n"
+        explanation += "Think of every prediction as a piece of a puzzle:\n\n"
+        explanation += f"- ✅ **Precise Hits:** The model correctly identified **{tn}** benign cases and **{tp}** malignant cases.\n"
+        explanation += f"- ⚠️ **False Alarm (False Positives):** In **{fp}** cases, the AI was over-cautious, indicating risk where there was none.\n"
+        explanation += f"- 🚨 **Hidden Danger (False Negatives):** There were **{fn}** cases where the AI failed to detect the tumor. **This is the number we strive to eliminate.**\n\n"
+
+        explanation += "---\n\n"
+        explanation += "#### 🎯 Why Recall is our Hero?\n"
+        explanation += f"Your **Recall of {rec:.1f}%** tells us how well the AI 'scans' for risks. We prefer a model that 'suspects' everything (High Recall) over one that ignores a real problem due to overconfidence.\n\n"
+        
+        explanation += f"> **Verdict:** With an **F1-Score of {f1:.1f}%**, this model shows a {'solid' if f1 > 90 else 'developing'} balance between precision and coverage."
             
     return explanation
 
 def explain_regression_metrics(metrics, model_name, lang="pt"):
     """
-    Provides a human-readable explanation of regression metrics.
+    Provides a deep pedagogical explanation of regression metrics, especially R2.
     """
     mae = metrics["MAE"]
+    rmse = metrics["RMSE"]
     r2 = metrics["R2 Score"]
     
     if lang == "pt":
-        explanation = f"### 💡 Explicação dos Resultados ({model_name})\n\n"
-        explanation += f"- **MAE ({mae:.2f}):** Em média, as previsões do modelo erram por {mae:.2f} unidades.\n"
-        explanation += f"- **R² Score ({r2:.2f}):** O modelo explica {(r2*100):.1f}% da variação dos dados.\n\n"
+        explanation = f"### 📈 Inteligência de Predição: **{model_name}**\n\n"
+        explanation += "Na regressão, não buscamos um 'Sim' ou 'Não', mas sim o quão perto chegamos do alvo real.\n\n"
+        
+        explanation += "---\n\n"
+        explanation += "#### 📏 Entendendo o Erro (MAE vs RMSE)\n"
+        explanation += f"- **Erro Médio (MAE): {mae:.2f}** units. Em média, nossas previsões 'erram' por este valor. É a nossa margem de incerteza cotidiana.\n"
+        explanation += f"- **Penalidade Crítica (RMSE): {rmse:.2f}**. Esta métrica 'grita' quando o modelo comete erros muito grandes. Se o RMSE for muito maior que o MAE, a IA está tendo 'apagões' em casos específicos.\n\n"
+
+        explanation += "---\n\n"
+        explanation += "#### 🧠 O Poder de Explicação (R² Score)\n"
+        explanation += f"Seu **R² é {r2:.2f}**. Pense nisso como o percentual de 'lógica' que a IA encontrou nos dados.\n\n"
+        explanation += f"- 💡 **{r2*100:.1f}%** da variação da diabetes é explicada por este modelo.\n"
+        explanation += f"- 🌪️ Os outros **{(1 - r2)*100:.1f}%** são causados por fatores imprevisíveis (caos, genética, ou dados faltantes).\n\n"
         
         if r2 > 0.7:
-            explanation += "✅ **Desempenho:** O modelo tem um bom ajuste aos dados.\n"
-        elif r2 > 0.4:
-            explanation += "⚠️ **Desempenho:** O modelo captura algumas tendências, mas ainda tem muito erro.\n"
+            explanation += "✅ **Veredito:** O modelo capturou o 'ritmo' dos dados com excelência. É uma base sólida para previsões clínicas.\n"
         else:
-            explanation += "❌ **Desempenho:** O modelo não está conseguindo aprender a relação.\n"
+            explanation += "⚠️ **Veredito:** O modelo identifica a tendência, mas a diabetes é complexa. Precisamos de mais variáveis (como histórico familiar) para aumentar a confiança.\n"
+            
     else:
-        explanation = f"### 💡 Results Explanation ({model_name})\n\n"
-        explanation += f"- **MAE ({mae:.2f}):** On average, the model's predictions are off by {mae:.2f} units.\n"
-        explanation += f"- **R² Score ({r2:.2f}):** The model explains {(r2*100):.1f}% of the data variation.\n\n"
+        explanation = f"### 📈 Prediction Intelligence: **{model_name}**\n\n"
+        explanation += "In regression, we don't look for 'Yes' or 'No', but for how close we get to the real target.\n\n"
         
-        if r2 > 0.7:
-            explanation += "✅ **Performance:** The model has a good fit to the data.\n"
-        elif r2 > 0.4:
-            explanation += "⚠️ **Performance:** The model captures some trends but still has significant error.\n"
-        else:
-            explanation += "❌ **Performance:** The model is failing to learn the relationship.\n"
+        explanation += "---\n\n"
+        explanation += "#### 📏 Understanding the Error (MAE vs RMSE)\n"
+        explanation += f"- **Mean Error (MAE): {mae:.2f}**. On average, our predictions are 'off' by this value. It's our daily margin of uncertainty.\n"
+        explanation += f"- **Critical Penalty (RMSE): {rmse:.2f}**. This metric 'screams' when the model makes very large errors. If RMSE is much higher than MAE, the AI is having 'blackouts' in specific cases.\n\n"
+
+        explanation += "---\n\n"
+        explanation += "#### 🧠 The Power of Explanation (R² Score)\n"
+        explanation += f"Your **R² is {r2:.2f}**. Think of it as the percentage of 'logic' the AI found in the data.\n\n"
+        explanation += f"- 💡 **{r2*100:.1f}%** of the diabetes variation is explained by this model.\n"
+        explanation += f"- 🌪️ The remaining **{(1 - r2)*100:.1f}%** is caused by unpredictable factors (chaos, genetics, or missing data).\n\n"
             
     return explanation
 

@@ -10,7 +10,8 @@ import {
   X,
   Bell,
   Search,
-  ChevronRight
+  ChevronRight,
+  HelpCircle
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
@@ -35,6 +36,7 @@ const Layout = ({ children, activePage, setActivePage }) => {
     { id: 'regression', icon: LineChart, label: 'Regressão' },
     { id: 'comparison', icon: BarChart3, label: 'Comparação' },
     { id: 'learning', icon: GraduationCap, label: 'Modo Estudo' },
+    { id: 'faq', icon: HelpCircle, label: 'FAQ' },
   ];
 
   return (

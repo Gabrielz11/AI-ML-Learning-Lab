@@ -9,9 +9,9 @@ def train_classification_model(model_type, X_train, y_train):
     if model_type == "Logistic Regression":
         model = LogisticRegression(max_iter=1000)
     elif model_type == "Decision Tree":
-        model = DecisionTreeClassifier(random_state=42)
+        model = DecisionTreeClassifier()
     elif model_type == "Random Forest":
-        model = RandomForestClassifier(random_state=42)
+        model = RandomForestClassifier()
     else:
         raise ValueError(f"Unknown model type: {model_type}")
     
@@ -25,7 +25,7 @@ def train_regression_model(model_type, X_train, y_train):
     if model_type == "Linear Regression":
         model = LinearRegression()
     elif model_type == "Decision Tree Regressor":
-        model = DecisionTreeRegressor(random_state=42)
+        model = DecisionTreeRegressor()
     else:
         raise ValueError(f"Unknown model type: {model_type}")
     

@@ -17,10 +17,11 @@ Esta plataforma foi construída para ensinar os pilares do Aprendizado Supervisi
 ### 1. Módulo de Classificação (Diagnóstico)
 - **O Problema**: Identificar categorias (Benigno vs. Maligno) usando o dataset de Câncer de Mama da UCI.
 - **Métricas Ensinadas**: 
-    - **Acurácia**: Taxa de acerto geral.
-    - **Recall (Sensibilidade)**: Vital na saúde para não deixar passar nenhum caso positivo.
-    - **F1-Score**: O equilíbrio entre precisão e sensibilidade.
-- **Visualização**: Gráficos comparativos entre Regressão Logística, Árvores de Decisão e Random Forest.
+    - **Acurácia**: A taxa geral de acerto.
+    - **Recall (Sensibilidade)**: O "não deixar passar nada". Vital para garantir que casos positivos (Malignos) sejam detectados.
+    - **Precisão**: O quanto podemos confiar no alarme. Evita sustos desnecessários (Falsos Positivos).
+    - **F1-Score**: O equilíbrio matemático que valida se o modelo é realmente confiável.
+- **Matriz de Confusão**: Um mapa visual que divide os resultados em Verdadeiros Positivos/Negativos e os perigosos Falsos Negativos.
 
 ![Módulo de Classificação](./assets/screenshots/classification.png)
 *Análise detalhada de métricas e performance de modelos de classificação.*
@@ -28,9 +29,10 @@ Esta plataforma foi construída para ensinar os pilares do Aprendizado Supervisi
 ### 2. Módulo de Regressão (Predição Numérica)
 - **O Problema**: Prever a progressão da Diabetes (valor numérico contínuo) após um ano.
 - **Métricas Ensinadas**:
-    - **MAE (Erro Médio Absoluto)**: A média do "erro" em unidades reais.
-    - **R² Score**: Quanto o modelo explica a variabilidade dos dados (0 a 1).
-- **Visualização**: Gráfico de dispersão com a **Linha de Predição Ideal**, demonstrando visualmente o erro do modelo.
+    - **MAE (Erro Médio Absoluto)**: A distância média real entre a previsão da IA e a realidade.
+    - **RMSE**: Penaliza erros grandes, identificando se a IA está cometendo "falhas críticas".
+    - **R² Score (Coeficiente de Determinação)**: Explica quanta variabilidade dos dados a IA capturou comparado a um chute básico na média.
+- **Visualização**: Gráfico de dispersão com a **Linha de Predição Ideal**, demonstrando visualmente o erro residual de cada caso.
 
 ![Módulo de Regressão](./assets/screenshots/regression.png)
 *Visualização da linha de tendência e distribuição dos erros na predição de diabetes.*

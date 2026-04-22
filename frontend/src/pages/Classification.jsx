@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  Activity, 
-  Target, 
-  Zap, 
-  ShieldCheck, 
-  Database, 
+import {
+  Play,
+  Activity,
+  Target,
+  Zap,
+  ShieldCheck,
+  Database,
   Info,
   BarChart3,
   HelpCircle,
   GraduationCap,
   CheckCircle2
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip as RechartsTooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   Legend
 } from 'recharts';
@@ -34,31 +34,55 @@ const t = content.pt.classification;
 const Classification = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [chartData, setChartData] = useState([]);
 
-  const chartData = [
-    { name: 'Regressão Logística', accuracy: 94.2, f1: 93.1 },
-    { name: 'Árvore de Decisão', accuracy: 91.5, f1: 90.8 },
-    { name: 'Random Forest', accuracy: 98.2, f1: 98.3 },
-  ];
-
-  const runModel = () => {
+  const runModel = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:8000/run-experiment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          task_type: 'classification',
+          models: ['Logistic Regression', 'Decision Tree', 'Random Forest'],
+          lang: 'pt'
+        })
+      });
+      const data = await response.json();
+
+      // Select Random Forest as the primary display model (usually the best)
+      const primaryModel = data['Random Forest'] || Object.values(data)[0];
+
+      const newChartData = Object.entries(data).map(([name, res]) => ({
+        name: name,
+        accuracy: (res.metrics.Accuracy * 100).toFixed(1),
+        f1: (res.metrics['F1-score'] * 100).toFixed(1)
+      }));
+
+      const cm = primaryModel.metrics['Confusion Matrix'];
+      const formattedCM = [
+        { label: 'Real: Benigno', predBenigno: cm[0][0], predMaligno: cm[0][1] },
+        { label: 'Real: Maligno', predBenigno: cm[1][0], predMaligno: cm[1][1] }
+      ];
+
       setResults({
         metrics: {
-          accuracy: "98.2%",
-          precision: "97.5%",
-          recall: "99.1%",
-          f1: "98.3%"
+          accuracy: (primaryModel.metrics.Accuracy * 100).toFixed(1) + "%",
+          precision: (primaryModel.metrics.Precision * 100).toFixed(1) + "%",
+          recall: (primaryModel.metrics.Recall * 100).toFixed(1) + "%",
+          f1: (primaryModel.metrics['F1-score'] * 100).toFixed(1) + "%"
         },
-        confusionMatrix: [
-          { label: 'Real: Maligno', predMaligno: 52, predBenigno: 1 },
-          { label: 'Real: Benigno', predMaligno: 2, predBenigno: 116 }
-        ],
-        explanation: "O modelo detectou corretamente 99.1% dos casos positivos (Recall). Em diagnósticos de saúde, um alto Recall é fundamental para garantir que pacientes com a condição não passem despercebidos."
+        confusionMatrix: formattedCM,
+        explanation: primaryModel.explanation
       });
+
+
+      setChartData(newChartData);
+    } catch (error) {
+      console.error("Erro ao treinar modelos:", error);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handlePredict = (inputs) => {
@@ -68,11 +92,11 @@ const Classification = () => {
     const score = (radius * 10) + (texture * 2) + (area * 0.1);
     const isMalignant = score > 300;
 
-    return { 
-      label: isMalignant ? 'Maligno' : 'Benigno', 
+    return {
+      label: isMalignant ? 'Maligno' : 'Benigno',
       status: isMalignant ? 'danger' : 'success',
-      explanation: isMalignant 
-        ? `A IA classificou como Maligno pois as medidas de Raio (${radius}) e Área (${area}) estão significativamente acima da média do dataset para tecidos saudáveis.` 
+      explanation: isMalignant
+        ? `A IA classificou como Maligno pois as medidas de Raio (${radius}) e Área (${area}) estão significativamente acima da média do dataset para tecidos saudáveis.`
         : `A IA classificou como Benigno. As características celulares inseridas estão dentro do padrão de tecidos normais observado durante o treinamento.`,
       ideal: "O ideal para um diagnóstico preventivo é que o modelo tenha um alto Recall (não deixe passar casos positivos) e que os dados do simulador sejam comparados com exames laboratoriais reais."
     };
@@ -85,7 +109,7 @@ const Classification = () => {
           <h2 className="text-3xl font-bold tracking-tight">{t.title}</h2>
           <p className="text-muted-foreground mt-1 text-sm">{t.subtitle}</p>
         </div>
-        <button 
+        <button
           onClick={runModel}
           disabled={loading}
           className="btn-primary shadow-indigo-200 shadow-lg"
@@ -146,13 +170,13 @@ const Classification = () => {
                       </div>
                       <div className="space-y-2">
                         <p><strong>Por que comparar?</strong> Nem sempre o modelo com a barra azul mais alta é o melhor. Em medicina, preferimos modelos com a <strong>barra verde alta</strong>, pois eles erram menos na detecção de casos críticos.</p>
-                        <p>No gráfico acima, o <strong>Random Forest</strong> costuma vencer por combinar várias "opiniões" de árvores diferentes.</p>
+                        <p>O gráfico compara os resultados reais processados pelo backend agora.</p>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                <Simulator 
+                <Simulator
                   title="Simulador de Diagnóstico"
                   description="Insira dados de um novo paciente para testar a IA."
                   onPredict={handlePredict}
@@ -165,16 +189,20 @@ const Classification = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="card-container">
-                    <h4 className="font-bold mb-4 flex items-center gap-2 text-slate-800">Matriz de Confusão</h4>
-                    <DataTable 
-                      columns={[{ header: 'Real / Predito', key: 'label' }, { header: 'Maligno', key: 'predMaligno' }, { header: 'Benigno', key: 'predBenigno' }]}
+                    <h4 className="font-bold mb-4 flex items-center gap-2 text-slate-800">Matriz de Confusão (Real vs. IA)</h4>
+                    <DataTable
+                      columns={[
+                        { header: 'Status Real', key: 'label' },
+                        { header: 'Predito: Benigno', key: 'predBenigno' },
+                        { header: 'Predito: Maligno', key: 'predMaligno' }
+                      ]}
                       data={results.confusionMatrix}
                     />
                   </div>
-                  <div className="space-y-4">
-                    <h4 className="font-bold text-slate-800 flex items-center gap-2">Interpretação</h4>
-                    <ExplanationBox content={results.explanation} type="info" />
-                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-bold text-slate-800 flex items-center gap-2">Explicação Detalhada</h4>
+                  <ExplanationBox content={results.explanation} type="info" />
                 </div>
               </motion.div>
             )}
