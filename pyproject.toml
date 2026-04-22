@@ -1,0 +1,28 @@
+[project]
+name = "ml-learning-lab"
+version = "1.0.0"
+description = "An interactive educational platform to learn Machine Learning with automated explanations."
+authors = [
+    {name = "Gabriel", email = "[EMAIL_ADDRESS]"}
+]
+dependencies = [
+    "streamlit>=1.20.0",
+    "pandas>=1.5.0",
+    "scikit-learn>=1.0.0",
+    "seaborn>=0.11.0",
+    "matplotlib>=3.5.0",
+    "numpy>=1.21.0"
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.streamlit]
+theme.primaryColor = "#65dd69ff"
+theme.backgroundColor = "#FFFFFF"
+theme.secondaryBackgroundColor = "#F0F2F6"
+theme.textColor = "#262730"
+theme.font = "sans serif"
