@@ -34,7 +34,7 @@ async def root():
 async def execute_experiment(request: ExperimentRequest):
     try:
         if request.task_type == "classification":
-            results, _, _, _, _, _, _ = run_classification_pipeline(request.models, lang=request.lang)
+            results, _, _, _, _, _, _, comparison = run_classification_pipeline(request.models, lang=request.lang)
             # Prepare serializable results
             serializable_results = {}
             for name, data in results.items():
@@ -47,10 +47,13 @@ async def execute_experiment(request: ExperimentRequest):
                     "metrics": metrics,
                     "explanation": data["explanation"]
                 }
-            return serializable_results
+            return {
+                "results": serializable_results,
+                "comparison": comparison
+            }
             
         elif request.task_type == "regression":
-            results, _, _, _, _, _ = run_regression_pipeline(request.models, lang=request.lang)
+            results, _, _, _, _, _, comparison = run_regression_pipeline(request.models, lang=request.lang)
             # Prepare serializable results
             serializable_results = {}
             for name, data in results.items():
@@ -58,7 +61,10 @@ async def execute_experiment(request: ExperimentRequest):
                     "metrics": data["metrics"],
                     "explanation": data["explanation"]
                 }
-            return serializable_results
+            return {
+                "results": serializable_results,
+                "comparison": comparison
+            }
             
         else:
             raise HTTPException(status_code=400, detail="Invalid task type")

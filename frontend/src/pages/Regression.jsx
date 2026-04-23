@@ -30,6 +30,7 @@ import Simulator from '../components/Simulator';
 const Regression = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [comparison, setComparison] = useState("");
 
   // Dados de dispersão (Pontos)
   const [scatterData, setScatterData] = useState([]);
@@ -54,7 +55,10 @@ const Regression = () => {
       });
       const data = await response.json();
 
-      const primaryModel = data['Linear Regression'] || Object.values(data)[0];
+      const modelsResults = data.results;
+      const modelComparison = data.comparison;
+
+      const primaryModel = modelsResults['Linear Regression'] || Object.values(modelsResults)[0];
 
       // Generate some visual scatter data for the chart based on the metrics
       const mockScatter = Array.from({ length: 50 }, (_, i) => {
@@ -71,6 +75,7 @@ const Regression = () => {
         },
         explanation: primaryModel.explanation
       });
+      setComparison(modelComparison);
       setScatterData(mockScatter);
     } catch (error) {
       console.error("Erro ao treinar modelos:", error);
@@ -211,7 +216,16 @@ const Regression = () => {
                   ]}
                 />
 
-                <ExplanationBox title="Análise Pedagógica Profunda" content={results.explanation} type="success" />
+                <div className="space-y-6">
+                  <ExplanationBox title="Análise Pedagógica Detalhada" content={results.explanation} type="info" />
+                  
+                  {comparison && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                      <h4 className="font-bold text-emerald-800 flex items-center gap-2 mb-4">Veredito do Especialista</h4>
+                      <ExplanationBox content={comparison} type="success" />
+                    </motion.div>
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

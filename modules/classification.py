@@ -1,7 +1,7 @@
 from services.data_loader import load_classification_data
 from services.model_trainer import train_classification_model
 from modules.evaluation import evaluate_model
-from modules.explanation import explain_classification_metrics
+from modules.explanation import explain_classification_metrics, compare_models_explanation
 
 def run_classification_pipeline(model_list, lang="pt"):
     """
@@ -20,5 +20,6 @@ def run_classification_pipeline(model_list, lang="pt"):
             "explanation": explanation,
             "model": model
         }
-        
-    return results, X_train, X_test, y_train, y_test, features, targets
+    
+    comparison = compare_models_explanation(results, "classification", lang=lang)
+    return results, X_train, X_test, y_train, y_test, features, targets, comparison

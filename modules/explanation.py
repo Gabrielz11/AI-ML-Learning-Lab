@@ -166,10 +166,10 @@ def compare_models_explanation(results, task_type, lang="pt"):
     """
     best_model = None
     if task_type == "classification":
-        best_model = max(results, key=lambda x: results[x]["F1-score"])
+        best_model = max(results, key=lambda x: results[x]["metrics"]["F1-score"])
         reason = "maior F1-score" if lang == "pt" else "highest F1-score"
     else:
-        best_model = min(results, key=lambda x: results[x]["MAE"])
+        best_model = min(results, key=lambda x: results[x]["metrics"]["MAE"])
         reason = "menor erro médio (MAE)" if lang == "pt" else "lowest mean error (MAE)"
         
     if lang == "pt":

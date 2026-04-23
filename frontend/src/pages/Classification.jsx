@@ -34,6 +34,7 @@ const t = content.pt.classification;
 const Classification = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [comparison, setComparison] = useState("");
   const [chartData, setChartData] = useState([]);
 
   const runModel = async () => {
@@ -50,10 +51,13 @@ const Classification = () => {
       });
       const data = await response.json();
 
-      // Select Random Forest as the primary display model (usually the best)
-      const primaryModel = data['Random Forest'] || Object.values(data)[0];
+      const modelsResults = data.results;
+      const modelComparison = data.comparison;
 
-      const newChartData = Object.entries(data).map(([name, res]) => ({
+      // Select Random Forest as the primary display model
+      const primaryModel = modelsResults['Random Forest'] || Object.values(modelsResults)[0];
+
+      const newChartData = Object.entries(modelsResults).map(([name, res]) => ({
         name: name,
         accuracy: (res.metrics.Accuracy * 100).toFixed(1),
         f1: (res.metrics['F1-score'] * 100).toFixed(1)
@@ -75,6 +79,9 @@ const Classification = () => {
         confusionMatrix: formattedCM,
         explanation: primaryModel.explanation
       });
+
+      setComparison(modelComparison);
+      setChartData(newChartData);
 
 
       setChartData(newChartData);
@@ -203,6 +210,13 @@ const Classification = () => {
                 <div className="space-y-4">
                   <h4 className="font-bold text-slate-800 flex items-center gap-2">Explicação Detalhada</h4>
                   <ExplanationBox content={results.explanation} type="info" />
+                  
+                  {comparison && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                      <h4 className="font-bold text-emerald-800 flex items-center gap-2 mt-8">Veredito do Especialista</h4>
+                      <ExplanationBox content={comparison} type="success" />
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             )}
