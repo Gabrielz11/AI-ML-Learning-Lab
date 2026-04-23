@@ -2,9 +2,6 @@
 
 Nexus ML é uma plataforma educacional de ponta projetada para transformar o aprendizado de Machine Learning em uma experiência visual, interativa e profissional. O laboratório permite que estudantes experimentem algoritmos reais, analisem métricas de performance e utilizem simuladores para prever resultados em tempo real.
 
-![Interface Nexus ML](./assets/screenshots/hero.png)
-*Visualização premium da interface do Nexus ML Learning Lab.*
-
 ![Dashboard Principal](./assets/screenshots/home.png)
 *Visão geral do painel de controle e navegação.*
 
