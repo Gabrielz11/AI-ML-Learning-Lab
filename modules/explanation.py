@@ -26,7 +26,12 @@ def explain_classification_metrics(metrics, model_name, lang="pt"):
         explanation += "#### 🎯 Por que o Recall é o nosso Herói?\n"
         explanation += f"Seu **Recall de {rec:.1f}%** nos diz quão bem a IA 'varre' o hospital em busca de riscos. Preferimos um modelo que 'suspeite' de tudo (Alto Recall) do que um que ignore um problema real por excesso de confiança.\n\n"
         
-        explanation += f"> **Conclusão:** Com um **F1-Score de {f1:.1f}%**, este modelo mostra um equilíbrio {'sólido' if f1 > 90 else 'em desenvolvimento'} entre ser preciso e ser abrangente."
+        explanation += f"> **Conclusão:** Com um **F1-Score de {f1:.1f}%**, este modelo mostra um equilíbrio {'sólido' if f1 > 90 else 'em desenvolvimento'} entre ser preciso e ser abrangente.\n\n"
+        
+        explanation += "---\n\n"
+        explanation += "#### 🔬 Referência Científica\n"
+        explanation += "- **Random Forest:** Breiman, L. (2001). *Random Forests*. Machine Learning, 45(1), 5-32. Este é o artigo original que provou que 'muitas vozes' (árvores) decidem melhor que uma só.\n"
+        explanation += "- **Métricas de Diagnóstico:** Fawcett, T. (2006). *An introduction to ROC analysis*. Referência essencial para entender o balanço entre acertos e alarmes falsos."
         
     else:
         explanation = f"### 🚀 Model Diagnosis: **{model_name}**\n\n"
@@ -43,7 +48,12 @@ def explain_classification_metrics(metrics, model_name, lang="pt"):
         explanation += "#### 🎯 Why Recall is our Hero?\n"
         explanation += f"Your **Recall of {rec:.1f}%** tells us how well the AI 'scans' for risks. We prefer a model that 'suspects' everything (High Recall) over one that ignores a real problem due to overconfidence.\n\n"
         
-        explanation += f"> **Verdict:** With an **F1-Score of {f1:.1f}%**, this model shows a {'solid' if f1 > 90 else 'developing'} balance between precision and coverage."
+        explanation += f"> **Verdict:** With an **F1-Score of {f1:.1f}%**, this model shows a {'solid' if f1 > 90 else 'developing'} balance between precision and coverage.\n\n"
+        
+        explanation += "---\n\n"
+        explanation += "#### 🔬 Scientific Reference\n"
+        explanation += "- **Random Forest:** Breiman, L. (2001). *Random Forests*. Machine Learning, 45(1), 5-32. This seminal paper established the 'Forest' as a gold standard for robust prediction.\n"
+        explanation += "- **Diagnosis Metrics:** Fawcett, T. (2006). *An introduction to ROC analysis*. Pattern Recognition Letters. A key reference for understanding how AI balances hits and misses."
             
     return explanation
 
@@ -73,7 +83,12 @@ def explain_regression_metrics(metrics, model_name, lang="pt"):
         if r2 > 0.7:
             explanation += "✅ **Veredito:** O modelo capturou o 'ritmo' dos dados com excelência. É uma base sólida para previsões clínicas.\n"
         else:
-            explanation += "⚠️ **Veredito:** O modelo identifica a tendência, mas a diabetes é complexa. Precisamos de mais variáveis (como histórico familiar) para aumentar a confiança.\n"
+            explanation += "⚠️ **Veredito:** O modelo identifica a tendência, mas a diabetes é complexa. Precisamos de mais variáveis (como histórico familiar) para aumentar a confiança.\n\n"
+            
+        explanation += "---\n\n"
+        explanation += "#### 🔬 Fundamentação Teórica\n"
+        explanation += "- **R² Score:** Wright, S. (1921). *Correlation and causation*. Journal of Agricultural Research. A base estatística de como medimos a variância explicada.\n"
+        explanation += "- **XAI (Interpretabilidade):** Lundberg, S. M., & Lee, S. I. (2017). *A unified approach to interpreting model predictions*. NeurIPS. Referência moderna sobre como abrir a 'caixa-preta' da regressão."
             
     else:
         explanation = f"### 📈 Prediction Intelligence: **{model_name}**\n\n"
