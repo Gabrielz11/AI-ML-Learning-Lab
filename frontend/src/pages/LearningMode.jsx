@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Database, Cpu, Play, CheckCircle2, BookOpen } from 'lucide-react';
+import { ChevronDown, Database, Cpu, Play, CheckCircle2, BookOpen, Brain, GraduationCap } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 const Step = ({ number, title, icon: Icon, children, isOpen, onToggle }) => (
   <div className={`card-container p-0 overflow-hidden transition-all duration-300 ${isOpen ? 'ring-2 ring-primary/20' : ''}`}>
@@ -22,7 +23,7 @@ const Step = ({ number, title, icon: Icon, children, isOpen, onToggle }) => (
       animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
       className="overflow-hidden bg-slate-50/30"
     >
-      <div className="p-6 border-t border-border text-sm leading-relaxed text-slate-600 space-y-4">
+      <div className="p-6 border-t border-border text-sm leading-relaxed text-slate-600 space-y-4 markdown-content">
         {children}
       </div>
     </motion.div>
@@ -111,18 +112,72 @@ const LearningMode = () => {
 
         <Step 
           number="4" 
-          title="Avaliação Final" 
+          title="Avaliação e Métricas" 
           icon={Play}
           isOpen={openStep === 4}
           onToggle={() => setOpenStep(openStep === 4 ? null : 4)}
         >
-          <p>Por fim, comparamos as previsões do modelo com as respostas reais do grupo de Teste.</p>
+          <ReactMarkdown>Métricas como **Acurácia, Recall e R²** são os KPIs (indicadores-chave) do projeto. Elas dizem se o modelo está pronto para produção ou se precisa de ajustes.</ReactMarkdown>
           <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-900 mt-4">
-            <h5 className="font-bold mb-1">Métricas de Sucesso:</h5>
-            <p className="text-xs opacity-80 italic">"Se o modelo acertou 19 de 20 casos, temos 95% de acurácia."</p>
+            <h5 className="font-bold mb-1">KPIs de Performance:</h5>
+            <p className="text-xs opacity-80 italic">"Modelos médicos exigem Recall &gt; 95% para garantir a segurança dos pacientes."</p>
+          </div>
+        </Step>
+
+        <Step 
+          number="5" 
+          title="Interpretabilidade (XAI)" 
+          icon={Brain}
+          isOpen={openStep === 5}
+          onToggle={() => setOpenStep(openStep === 5 ? null : 5)}
+        >
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-wider">
+              Nível Profissional
+            </div>
+            <ReactMarkdown>Empresas como Google e Amazon não aceitam mais modelos **"Caixa Preta"**. Elas usam **Explainable AI (XAI)** para entender o "porquê" de cada decisão.</ReactMarkdown>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+                <h6 className="font-bold text-xs text-slate-800 mb-2">SHAP & LIME</h6>
+                <p className="text-[11px] text-slate-500">Ferramentas que medem o impacto exato de cada variável na decisão final da IA.</p>
+              </div>
+              <div className="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+                <h6 className="font-bold text-xs text-slate-800 mb-2">Ética & Viés</h6>
+                <p className="text-[11px] text-slate-500">Garantir que a IA não tome decisões baseadas em preconceitos ou dados viciados.</p>
+              </div>
+            </div>
+            
+            <p className="pt-2 italic border-t border-slate-100 text-slate-500">No Nexus ML, nossas análises pedagógicas automatizadas são o primeiro passo para você dominar a transparência de modelos.</p>
           </div>
         </Step>
       </div>
+
+      <section className="card-container bg-gradient-to-br from-slate-900 to-indigo-950 text-white border-none p-10 relative overflow-hidden">
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 backdrop-blur-xl flex items-center justify-center border border-white/10">
+              <GraduationCap className="text-indigo-400" size={28} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">O Futuro é a IA Explicável</h3>
+              <p className="text-indigo-200/60 text-sm">Próximos passos para sua carreira em Dados</p>
+            </div>
+          </div>
+          
+          <ReactMarkdown 
+            components={{
+              p: ({node, ...props}) => <p className="text-indigo-100/80 leading-relaxed text-sm max-w-2xl" {...props} />
+            }}
+          >
+            Aprender a treinar um modelo é o básico. O diferencial profissional hoje é saber **justificar** a decisão da IA para os stakeholders e garantir que ela seja ética e justa. Domine as métricas que você viu aqui e você estará à frente de 90% do mercado.
+          </ReactMarkdown>
+        </div>
+        
+        {/* Decorative background element */}
+        <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+      </section>
     </div>
   );
 };
